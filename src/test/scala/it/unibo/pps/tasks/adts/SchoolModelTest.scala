@@ -35,3 +35,27 @@ class SchoolModelTest:
     assertEquals(expectedAliceCourses, school.coursesOfATeacher(alice))
     val expectedBobCourses = Cons(science, Nil())
     assertEquals(expectedBobCourses, school.coursesOfATeacher(bob))
+
+  @Test def testExistingCoursesWithoutDuplicates(): Unit =
+    val alice = BasicSchoolModule.teacher("Alice")
+    val bob = BasicSchoolModule.teacher("Bob")
+    val math = BasicSchoolModule.course("Math")
+    val science = BasicSchoolModule.course("Science")
+    val school = BasicSchoolModule.emptySchool
+      .setTeacherToCourse(alice, math)
+      .setTeacherToCourse(bob, math)
+      .setTeacherToCourse(alice, science)
+    val expectedTeachers = Cons("Science", Cons("Math", Nil()))
+    assertEquals(expectedTeachers, school.courses)
+
+  @Test def testExistingTeachersWithoutDuplicates() : Unit =
+    val alice = BasicSchoolModule.teacher("Alice")
+    val bob = BasicSchoolModule.teacher("Bob")
+    val math = BasicSchoolModule.course("Math")
+    val science = BasicSchoolModule.course("Science")
+    val school = BasicSchoolModule.emptySchool
+      .setTeacherToCourse(alice, math)
+      .setTeacherToCourse(bob, math)
+      .setTeacherToCourse(alice, science)
+    val expectedTeachers = Cons("Bob", Cons("Alice", Nil()))
+    assertEquals(expectedTeachers, school.teachers)

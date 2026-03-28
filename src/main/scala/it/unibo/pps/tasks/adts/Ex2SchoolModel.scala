@@ -124,8 +124,18 @@ object SchoolModel:
     def emptySchool: School = Nil()
 
     extension (school: School)
-      def courses: Sequence[String] = Nil()
-      def teachers: Sequence[String] = Nil()
+      def courses: Sequence[String] = school match
+        case Cons((_, CourseImpl(n)), next) =>
+          val nextCourses= next.courses
+          if containString(nextCourses, n) then nextCourses
+          else Cons(n, nextCourses)
+        case _ => Nil()
+      def teachers: Sequence[String] = school match
+        case Cons((TeacherImpl(n), _), next) =>
+          val nextTeachers = next.teachers
+          if containString(nextTeachers, n) then nextTeachers
+          else Cons(n, nextTeachers)
+        case _ => Nil()
       def setTeacherToCourse(teacher: Teacher, course: Course): School = Cons((teacher, course), school)
       def coursesOfATeacher(teacher: Teacher): Sequence[Course] = school match
         case Cons((t, c), next) if t.equals(teacher) => Cons(c, next.coursesOfATeacher(teacher))
@@ -139,6 +149,10 @@ object SchoolModel:
         case Cons((_, CourseImpl(n)), _) if n.equals(name) => true
         case Cons(_, cs) => cs.hasCourse(name)
         case _ => false
+    private def containString(seq: Sequence[String], name: String): Boolean = seq match
+      case Cons(h, _) if h.equals(name) => true
+      case Cons(_, next) => containString(next, name)
+      case _ => false
 @main def examples(): Unit =
   import SchoolModel.BasicSchoolModule.*
   val school = emptySchool
