@@ -112,21 +112,30 @@ object SchoolModel:
        */
       def hasCourse(name: String): Boolean
   object BasicSchoolModule extends SchoolModule:
-    override type School = Nothing
-    override type Teacher = Nothing
-    override type Course = Nothing
+    case class TeacherImpl(name: String)
+    case class CourseImpl(name: String)
 
-    def teacher(name: String): Teacher = ???
-    def course(name: String): Course = ???
-    def emptySchool: School = ???
+    override type School = Sequence[(Teacher, Course)]
+    override type Teacher = TeacherImpl
+    override type Course = CourseImpl
+
+    def teacher(name: String): Teacher = TeacherImpl(name)
+    def course(name: String): Course = CourseImpl(name)
+    def emptySchool: School = Nil()
 
     extension (school: School)
-      def courses: Sequence[String] = ???
-      def teachers: Sequence[String] = ???
-      def setTeacherToCourse(teacher: Teacher, course: Course): School = ???
+      def courses: Sequence[String] = Nil()
+      def teachers: Sequence[String] = Nil()
+      def setTeacherToCourse(teacher: Teacher, course: Course): School = Cons((teacher, course), school)
       def coursesOfATeacher(teacher: Teacher): Sequence[Course] = ???
-      def hasTeacher(name: String): Boolean = ???
-      def hasCourse(name: String): Boolean = ???
+      def hasTeacher(name: String): Boolean = school match
+        case Cons((t, _), _) if t.name == name => true
+        case Cons(_, ts) => ts.hasTeacher(name)
+        case _ => false
+      def hasCourse(name: String): Boolean = school match
+        case Cons((_, c), _) if c.name == name => true
+        case Cons(_, cs) => cs.hasCourse(name)
+        case _ => false
 @main def examples(): Unit =
   import SchoolModel.BasicSchoolModule.*
   val school = emptySchool
