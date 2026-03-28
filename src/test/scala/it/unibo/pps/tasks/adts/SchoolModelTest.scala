@@ -21,3 +21,17 @@ class SchoolModelTest:
     val school = empty.setTeacherToCourse(alice, math)
     assertTrue(school.hasTeacher("Alice"))
     assertTrue(school.hasCourse("Math"))
+
+  @Test def testCoursesOfATeacher(): Unit =
+    val alice = BasicSchoolModule.teacher("Alice")
+    val bob = BasicSchoolModule.teacher("Bob")
+    val math = BasicSchoolModule.course("Math")
+    val science = BasicSchoolModule.course("Science")
+    val school = BasicSchoolModule.emptySchool
+      .setTeacherToCourse(alice, math)
+      .setTeacherToCourse(alice, science)
+      .setTeacherToCourse(bob, science)
+    val expectedAliceCourses = Cons(science, Cons(math, Nil()))
+    assertEquals(expectedAliceCourses, school.coursesOfATeacher(alice))
+    val expectedBobCourses = Cons(science, Nil())
+    assertEquals(expectedBobCourses, school.coursesOfATeacher(bob))

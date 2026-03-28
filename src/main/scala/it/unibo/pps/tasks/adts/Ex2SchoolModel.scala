@@ -127,13 +127,16 @@ object SchoolModel:
       def courses: Sequence[String] = Nil()
       def teachers: Sequence[String] = Nil()
       def setTeacherToCourse(teacher: Teacher, course: Course): School = Cons((teacher, course), school)
-      def coursesOfATeacher(teacher: Teacher): Sequence[Course] = ???
+      def coursesOfATeacher(teacher: Teacher): Sequence[Course] = school match
+        case Cons((t, c), next) if t.equals(teacher) => Cons(c, next.coursesOfATeacher(teacher))
+        case Cons(_, next) => next.coursesOfATeacher(teacher)
+        case _ => Nil()
       def hasTeacher(name: String): Boolean = school match
-        case Cons((t, _), _) if t.name == name => true
+        case Cons((TeacherImpl(n), _), _) if n.equals(name) => true
         case Cons(_, ts) => ts.hasTeacher(name)
         case _ => false
       def hasCourse(name: String): Boolean = school match
-        case Cons((_, c), _) if c.name == name => true
+        case Cons((_, CourseImpl(n)), _) if n.equals(name) => true
         case Cons(_, cs) => cs.hasCourse(name)
         case _ => false
 @main def examples(): Unit =
