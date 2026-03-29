@@ -126,7 +126,7 @@ object SchoolModel:
     extension (school: School)
       def courses: Sequence[String] = school match
         case Cons((_, CourseImpl(n)), next) =>
-          val nextCourses= next.courses
+          val nextCourses = next.courses
           if containString(nextCourses, n) then nextCourses
           else Cons(n, nextCourses)
         case _ => Nil()
